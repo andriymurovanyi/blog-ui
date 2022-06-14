@@ -1,36 +1,38 @@
 <template>
-  <div class="posts-list">
-    <v-modal v-model="isRemoveModalOpened">
-      <template #header>
-        Item removal
-      </template>
-      <template #body>
-        You really want to remove item ?
-      </template>
-      <template #footer>
-        <div class="modal-actions">
-          <v-button type="primary" @click="closeRemoveModal">Cancel</v-button>
-          <v-button type="error" @click="removePostFn">Confirm</v-button>
-        </div>
-      </template>
-    </v-modal>
-    <v-modal v-model="isEditModalOpened">
-      <template #header>
-        Item editing
-      </template>
-      <template #body>
-        <div class="d-flex">
-          <v-text-field v-model="activePost.title" label="Post title" />
-          <v-text-field v-model="activePost.body" label="Post body" />
-        </div>
-      </template>
-      <template #footer>
-        <div class="modal-actions">
-          <v-button type="warning" @click="closeEditModal">Cancel</v-button>
-          <v-button @click="updatePostFn" :disabled="!canSavePost" type="success">Confirm</v-button>
-        </div>
-      </template>
-    </v-modal>
+  <v-modal v-model="isRemoveModalOpened">
+    <template #header>
+      Item removal
+    </template>
+    <template #body>
+      You really want to remove item ?
+    </template>
+    <template #footer>
+      <div class="modal-actions">
+        <v-button type="primary" @click="closeRemoveModal">Cancel</v-button>
+        <v-button type="error" @click="removePostFn">Confirm</v-button>
+      </div>
+    </template>
+  </v-modal>
+  <v-modal v-model="isEditModalOpened">
+    <template #header>
+      Item editing
+    </template>
+    <template #body>
+      <div class="d-flex">
+        <v-text-field class="post-input" v-model="activePost.title" label="Post title" />
+        <v-text-field class="post-input" v-model="activePost.body" label="Post body" />
+      </div>
+    </template>
+    <template #footer>
+      <div class="modal-actions">
+        <v-button type="warning" @click="closeEditModal">Cancel</v-button>
+        <v-button @click="updatePostFn" :disabled="!canSavePost" type="success">Confirm</v-button>
+      </div>
+    </template>
+  </v-modal>
+
+  <v-loader v-if="loading" />
+  <div v-else class="posts-list">
     <v-post
       v-for="(post, index) in paginatedPosts"
       :key="index"
@@ -60,6 +62,8 @@
 <script>
 import { mapActions, mapState } from 'pinia';
 import { usePostsStore, postsActions } from '@/store';
+
+import vLoader from '@/components/common/Loader/Loader.vue';
 import vPost from '@/components/Post/Post.vue';
 import vModal from '@/components/common/Modal/Modal.vue';
 import vButton from '@/components/common/Button/Button.vue';
@@ -76,6 +80,7 @@ const initDefaultActivePostState = () => ({
 export default {
   name: 'Posts',
   components: {
+    vLoader,
     vPost,
     vModal,
     vButton,
@@ -90,7 +95,8 @@ export default {
   }),
   computed: {
     ...mapState(usePostsStore, {
-      posts: store => store.posts
+      posts: store => store.posts,
+      loading: store => store.loading
     }),
     canSavePost() {
       const requiredKeys = ['title', 'body'];
@@ -158,5 +164,9 @@ export default {
 [disabled] {
   opacity: .7;
   cursor: not-allowed;
+}
+
+.post-input {
+  min-width: 400px;
 }
 </style>

@@ -12,8 +12,8 @@ export const postsActions = {
 export const usePostsStore = defineStore('posts', {
   state: () => ({
     posts: [],
-    loading: false, // TODO: Process loading
-    error: null // TODO: Add error handling
+    loading: false,
+    error: null // TODO: Add correct error handling (mb show toast messages)
   }),
 
   actions: {
@@ -37,19 +37,15 @@ export const usePostsStore = defineStore('posts', {
     },
 
     [postsActions.CREATE_POST]: async function(data) {
-      this.loading = true
       try {
         const createdPost = await PostsService.createPost(data);
         this.posts.unshift(createdPost);
       } catch (error) {
         this.error = error
-      } finally {
-        this.loading = false;
       }
     },
 
     [postsActions.UPDATE_POST]: async function({ id, ...data }) {
-      this.loading = true
       try {
         const updatedPost = await PostsService.updatePost(id, data);
         const postIndex = this.posts.findIndex((post) => post.id === id);
@@ -58,13 +54,10 @@ export const usePostsStore = defineStore('posts', {
         }
       } catch (error) {
         this.error = error;
-      } finally {
-        this.loading = false;
       }
     },
 
     [postsActions.REMOVE_POST]: async function({ id }) {
-      this.loading = true
       try {
         await PostsService.removePost(id);
         const postIndex = this.posts.findIndex((post) => post.id === id);
@@ -73,8 +66,6 @@ export const usePostsStore = defineStore('posts', {
         }
       } catch (error) {
         this.error = error;
-      } finally {
-        this.loading = false;
       }
     }
   },

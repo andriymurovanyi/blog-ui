@@ -1,5 +1,5 @@
 <template>
-  <div class="blog container">
+  <div id="app" class="blog container">
     <router-view />
   </div>
 </template>
@@ -18,6 +18,7 @@ export default {
   text-align: center;
   color: #2c3e50;
   padding: 20px;
+  position: relative;
 }
 
 .container {
